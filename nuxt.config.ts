@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   ],
 
   app: {
-    baseURL: "/",
+    baseURL: "./",
     head: {
       title: "Component Gallery — Durable-inspired UI",
 
@@ -70,17 +70,6 @@ export default defineNuxtConfig({
           href: "/apple-icon.png",
         },
       ],
-    },
-  },
-  hooks: {
-    "prerender:routes"(ctx) {
-      const base = process.env.NUXT_APP_BASE_URL || "/";
-      if (base === "/" || !base) return;
-      ctx.routes = new Set(
-        [...ctx.routes].map((r) =>
-          r.startsWith(base) ? r : `${base}${r}`.replace(/\/+/g, "/"),
-        ),
-      );
     },
   },
 });
