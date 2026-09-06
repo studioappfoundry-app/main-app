@@ -1,0 +1,1007 @@
+// clientBusinessStore.js
+
+import { defineStore } from "pinia";
+import { clientBusinessesCache } from "./app/utils/seed";
+
+export const useClientBusinessStore = defineStore("clientbusiness", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(clientBusinessesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data client business";
+
+        console.error("[ClientBusinessStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// developmentActivityStore.js
+
+import { defineStore } from "pinia";
+import { developmentActivitiesCache } from "./app/utils/seed";
+
+export const useDevelopmentActivityStore = defineStore("developmentactivity", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(developmentActivitiesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data development activity";
+
+        console.error("[DevelopmentActivityStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// documentStore.js
+
+import { defineStore } from "pinia";
+import { documentsCache } from "./app/utils/seed";
+
+export const useDocumentStore = defineStore("document", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(documentsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data dokumen";
+
+        console.error("[DocumentStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// maintenanceStore.js
+
+import { defineStore } from "pinia";
+import { maintenanceCache } from "./app/utils/seed";
+
+export const useMaintenanceStore = defineStore("maintenance", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(maintenanceCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data maintenance";
+
+        console.error("[MaintenanceStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// maintenanceActivityStore.js
+
+import { defineStore } from "pinia";
+import { maintenanceActivitiesCache } from "./app/utils/seed";
+
+export const useMaintenanceActivityStore = defineStore("maintenanceactivity", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(maintenanceActivitiesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data maintenance activity";
+
+        console.error("[MaintenanceActivityStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// orderItemStore.js
+
+import { defineStore } from "pinia";
+import { orderItemsCache } from "./app/utils/seed";
+
+export const useOrderItemStore = defineStore("orderitem", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(orderItemsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data order item";
+
+        console.error("[OrderItemStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// orderStore.js
+
+import { defineStore } from "pinia";
+import { ordersCache } from "./app/utils/seed";
+
+export const useOrderStore = defineStore("order", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(ordersCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data order";
+
+        console.error("[OrderStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// paymentStore.js
+
+import { defineStore } from "pinia";
+import { paymentsCache } from "./app/utils/seed";
+
+export const usePaymentStore = defineStore("payment", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(paymentsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data pembayaran";
+
+        console.error("[PaymentStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// profileStore.js
+
+import { defineStore } from "pinia";
+import { profilesCache } from "./app/utils/seed";
+
+export const useProfileStore = defineStore("profile", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(profilesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data profile";
+
+        console.error("[ProfileStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// projectStore.js
+
+import { defineStore } from "pinia";
+import { projectsCache } from "./app/utils/seed";
+
+export const useProjectStore = defineStore("project", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(projectsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data project";
+
+        console.error("[ProjectStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// seoItemStore.js
+
+import { defineStore } from "pinia";
+import { seoGeoSnapshotsCache } from "./app/utils/seed";
+
+export const useSeoItemStore = defineStore("seoitem", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(seoGeoSnapshotsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data SEO";
+
+        console.error("[SeoItemStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// supportTicketStore.js
+
+import { defineStore } from "pinia";
+import { supportTicketsCache } from "./app/utils/seed";
+
+export const useSupportTicketStore = defineStore("supportticket", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(supportTicketsCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data support ticket";
+
+        console.error("[SupportTicketStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// ticketMessageStore.js
+
+import { defineStore } from "pinia";
+import { ticketMessagesCache } from "./app/utils/seed";
+
+export const useTicketMessageStore = defineStore("ticketmessage", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(ticketMessagesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data ticket message";
+
+        console.error("[TicketMessageStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});
+
+// websiteStore.js
+
+import { defineStore } from "pinia";
+import { websitesCache } from "./app/utils/seed";
+
+export const useWebsiteStore = defineStore("website", {
+  state: () => ({
+    items: [],
+    loading: false,
+    loaded: false,
+    error: null,
+    version: 0,
+    updatedAt: null,
+  }),
+
+  getters: {
+    data: (state) => state.items,
+    total: (state) => state.items.length,
+    isEmpty: (state) => state.items.length === 0,
+    isReady: (state) => state.loaded && !state.loading,
+    hasError: (state) => !!state.error,
+
+    byId: (state) => {
+      return (id) => state.items.find((item) => item.id === id);
+    },
+  },
+
+  actions: {
+    async init(force = false) {
+      if (this.loaded && !force) return;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { getScopedData } = useDataScope();
+
+        const result = getScopedData(websitesCache);
+
+        this.hydrate(result);
+      } catch (err) {
+        this.error = err?.message || "Gagal memuat data website";
+
+        console.error("[WebsiteStore] Failed to initialize:", err);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    hydrate(payload = {}) {
+      this.items = Array.isArray(payload.data) ? payload.data : [];
+
+      this.version = payload.version ?? 0;
+      this.updatedAt = payload.time_updated ?? null;
+      this.loaded = true;
+    },
+
+    async refresh() {
+      await this.init(true);
+    },
+
+    reset() {
+      this.items = [];
+      this.loading = false;
+      this.loaded = false;
+      this.error = null;
+      this.version = 0;
+      this.updatedAt = null;
+    },
+  },
+});

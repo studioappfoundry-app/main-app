@@ -1,0 +1,481 @@
+<template>
+  <div
+    class="input-stack"
+    :class="[
+      `size-${size}`,
+      {
+        'has-icon-left': hasIconLeft,
+        'has-icon-right': hasIconRight,
+        'has-error': !!error,
+        'is-disabled': disabled,
+        'is-textarea': isTextarea,
+        'is-date': isDateType,
+        'is-currency': isCurrency,
+      },
+      `mb-${marginB}`,
+    ]"
+    :style="{ '--max-width': maxWidth }"
+  >
+    <label v-if="label || $slots.label" :for="inputId" :class="`text-${size}`">
+      <slot name="label">{{ label }}</slot>
+    </label>
+
+    <div class="input-wrapper">
+      <span
+        v-if="isCurrency"
+        class="icon icon-left currency-prefix"
+        aria-hidden="true"
+      >
+        {{ currencyPrefix }}
+      </span>
+      <span v-else-if="hasIconLeft" class="icon icon-left" aria-hidden="true">
+        <slot name="icon-left" />
+      </span>
+
+      <component
+        :is="isTextarea ? 'textarea' : 'input'"
+        :id="inputId"
+        :class="attrs.class ? attrs.class : 'bg-background shadow-app'"
+        :type="isTextarea || isDateType || isCurrency ? 'text' : type"
+        :inputmode="isCurrency ? 'numeric' : undefined"
+        :value="displayValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :readonly="isDateType || readonly"
+        :rows="isTextarea ? rows : undefined"
+        :cols="isTextarea ? cols : undefined"
+        v-bind="$attrs"
+        @input="onInput"
+        @focus="onFocus"
+        @blur="onBlur"
+        @change="onChange"
+      />
+
+      <span
+        v-if="isDateType"
+        class="icon icon-right calendar-icon"
+        aria-hidden="true"
+        @click="onFocus($event)"
+      >
+        📅
+      </span>
+
+      <button
+        v-else-if="showClearButton"
+        type="button"
+        class="icon icon-right clear-btn"
+        aria-label="Clear input"
+        @click="clearInput"
+        @mousedown.prevent="clearInput"
+      >
+        ✕
+      </button>
+
+      <span v-else-if="hasIconRight" class="icon icon-right" aria-hidden="true">
+        <slot name="icon-right" />
+      </span>
+
+      <Datepicker
+        v-if="isDateType && showDatepicker"
+        :modelValue="modelValue"
+        @update:modelValue="onDateSelect"
+        @close="showDatepicker = false"
+      />
+    </div>
+
+    <small v-if="dynamicHint || $slots.hint">
+      <slot name="hint">{{ dynamicHint }}</slot>
+    </small>
+  </div>
+</template>
+
+<script setup>
+import { computed, ref, useSlots, useAttrs, useId } from "vue";
+import Datepicker from "./Datepicker.vue";
+
+defineOptions({ inheritAttrs: false });
+
+const props = defineProps({
+  modelValue: { type: [String, Number], default: "" },
+  type: {
+    type: String,
+    default: "text",
+    validator: (v) =>
+      [
+        "text",
+        "date",
+        "number",
+        "search",
+        "password",
+        "email",
+        "tel",
+        "url",
+        "textarea",
+      ].includes(v),
+  },
+  label: { type: String, default: "" },
+  hint: { type: String, default: "" },
+  placeholder: { type: String, default: "" },
+  id: { type: String, default: null },
+  error: { type: String, default: "" },
+  disabled: { type: Boolean, default: false },
+  readonly: { type: Boolean, default: false },
+  rows: { type: [String, Number], default: 4 },
+  cols: { type: [String, Number], default: undefined },
+  maxWidth: { type: String, default: "270px" },
+  size: {
+    type: String,
+    default: "md",
+    validator: (v) => ["sm", "md", "lg"].includes(v),
+  },
+  currencyPrefix: { type: String, default: "" },
+  marginB: {
+    type: String,
+    default: "md",
+    validator: (v) => ["sm", "md", "lg", "none"].includes(v),
+  },
+});
+
+const emit = defineEmits([
+  "update:modelValue",
+  "focus",
+  "blur",
+  "change",
+  "input",
+  "keydown",
+  "keyup",
+]);
+const slots = useSlots();
+const attrs = useAttrs();
+
+const showDatepicker = ref(false);
+
+const inputId = useId();
+const isTextarea = computed(() => props.type === "textarea");
+const isDateType = computed(() => props.type === "date");
+const isSearchType = computed(() => props.type === "search");
+const isCurrency = computed(() => !!props.currencyPrefix);
+
+const hasValue = computed(
+  () =>
+    props.modelValue !== "" &&
+    props.modelValue !== null &&
+    props.modelValue !== undefined,
+);
+const showClearButton = computed(
+  () => isSearchType.value && hasValue.value && !props.disabled,
+);
+
+const hasIconLeft = computed(() => !!slots["icon-left"] || isCurrency.value);
+const hasIconRight = computed(
+  () => !!slots["icon-right"] || isDateType.value || showClearButton.value,
+);
+
+const displayValue = computed(() => {
+  if (isDateType.value && props.modelValue) {
+    const date = new Date(props.modelValue);
+    if (!isNaN(date.getTime()))
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+  }
+  if (
+    isCurrency.value &&
+    props.modelValue !== "" &&
+    props.modelValue !== null
+  ) {
+    const rawNum = String(props.modelValue).replace(/\D/g, "");
+    if (rawNum === "") return "";
+    return new Intl.NumberFormat("de-DE").format(Number(rawNum));
+  }
+  return props.modelValue;
+});
+
+const dynamicHint = computed(() => props.error || props.hint || "");
+
+const onInput = (e) => {
+  if (isDateType.value) return;
+  let val = e.target.value;
+  if (isCurrency.value) val = val.replace(/\D/g, "");
+  emit("update:modelValue", val);
+  emit("input", e);
+};
+
+const clearInput = () => {
+  emit("update:modelValue", "");
+  emit("input", { target: { value: "" } });
+};
+
+const onFocus = (e) => {
+  emit("focus", e);
+  if (isDateType.value) showDatepicker.value = true;
+};
+
+const onBlur = (e) => {
+  setTimeout(() => {
+    if (!e.target.parentElement.contains(document.activeElement))
+      emit("blur", e);
+  }, 150);
+};
+
+const onChange = (e) => emit("change", e);
+const onDateSelect = (val) => {
+  emit("update:modelValue", val);
+  showDatepicker.value = false;
+};
+</script>
+
+<style scoped>
+.input-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(100%, var(--max-width, 270px));
+  font-size: 12px;
+  line-height: 1.4;
+}
+.input-stack label {
+  font-weight: 500;
+  color: var(--foreground);
+  cursor: pointer;
+  user-select: none;
+}
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-stack input,
+.input-stack textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 11px;
+  font: inherit;
+  outline: none;
+  color: var(--foreground);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.input-stack textarea {
+  resize: none;
+  min-height: 80px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.input-stack textarea::-webkit-scrollbar {
+  width: 6px;
+}
+.input-stack textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+.input-stack textarea::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.input-stack textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.input-stack input::placeholder,
+.input-stack textarea::placeholder {
+  color: var(--muted);
+}
+
+.input-stack.has-icon-left input,
+.input-stack.has-icon-left textarea {
+  padding-left: 36px;
+}
+.input-stack.has-icon-right input,
+.input-stack.has-icon-right textarea {
+  padding-right: 36px;
+}
+
+.input-stack.is-date input {
+  cursor: pointer;
+}
+.input-stack.is-date .calendar-icon {
+  cursor: pointer;
+  pointer-events: auto;
+}
+.input-stack.is-currency .currency-prefix {
+  font-weight: 600;
+  color: var(--foreground);
+  pointer-events: none;
+  width: auto;
+}
+
+.input-stack input:focus,
+.input-stack textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.input-stack.has-error input,
+.input-stack.has-error textarea {
+  border-color: #e74c3c;
+}
+.input-stack.has-error input:focus,
+.input-stack.has-error textarea:focus {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+.input-stack.has-error small {
+  color: #e74c3c;
+}
+
+.input-stack.is-disabled input,
+.input-stack.is-disabled textarea {
+  background: var(--background);
+  color: var(--muted);
+  cursor: not-allowed;
+  border-color: var(--border);
+}
+.input-stack.is-disabled label {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.input-stack small {
+  color: var(--muted);
+  font-size: 11px;
+  min-height: 16px;
+}
+
+.icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  pointer-events: none;
+  z-index: 1;
+}
+.icon-left {
+  left: 11px;
+}
+.icon-right {
+  right: 11px;
+}
+.clear-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  color: var(--muted);
+  pointer-events: auto;
+  transition: color 0.15s ease;
+}
+.clear-btn:hover {
+  color: #e74c3c;
+}
+
+.input-stack input[type="search"]::-webkit-search-decoration,
+.input-stack input[type="search"]::-webkit-search-cancel-button,
+.input-stack input[type="search"]::-webkit-search-results-button,
+.input-stack input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+.input-stack input[type="search"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+}
+
+.input-stack input[type="number"]::-webkit-inner-spin-button,
+.input-stack input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-stack input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-stack input[type="date"]::-webkit-calendar-picker-indicator,
+.input-stack input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Sizes */
+.size-sm input,
+.size-sm textarea {
+  padding: 7px 9px;
+  font-size: 11px;
+  border-radius: 7px;
+}
+.size-sm.has-icon-left input,
+.size-sm.has-icon-left textarea {
+  padding-left: 30px;
+}
+.size-sm.has-icon-right input,
+.size-sm.has-icon-right textarea {
+  padding-right: 30px;
+}
+.size-sm .icon {
+  width: 14px;
+  height: 14px;
+}
+.size-sm .icon-left {
+  left: 9px;
+}
+.size-sm .icon-right {
+  right: 9px;
+}
+
+.size-lg input,
+.size-lg textarea {
+  padding: 13px 14px;
+  font-size: 14px;
+  border-radius: 11px;
+}
+.size-lg.has-icon-left input,
+.size-lg.has-icon-left textarea {
+  padding-left: 42px;
+}
+.size-lg.has-icon-right input,
+.size-lg.has-icon-right textarea {
+  padding-right: 42px;
+}
+.size-lg .icon {
+  width: 18px;
+  height: 18px;
+}
+.size-lg .icon-left {
+  left: 14px;
+}
+.size-lg .icon-right {
+  right: 14px;
+}
+.text-md {
+  font-size: 15px;
+}
+.text-sm {
+  font-size: var(--text-sm);
+}
+.text-lg {
+  font-size: var(--text-lg);
+}
+.mb-sm {
+  margin-bottom: 0.5rem;
+}
+.mb-md {
+  margin-bottom: 1rem;
+}
+.mb-lg {
+  margin-bottom: 1.5rem;
+}
+.mb-none {
+  margin-bottom: 0;
+}
+</style>
