@@ -91,6 +91,7 @@ export default defineNuxtConfig({
   ],
 
   app: {
+    baseURL: "/",
     head: {
       title: "Component Gallery — Durable-inspired UI",
 
