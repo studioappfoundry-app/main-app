@@ -1,4 +1,12 @@
 <template>
+  <Dialog
+    v-model="showDialog"
+    variant="warning"
+    title="Keluar dari akun?"
+    message="Anda perlu masuk kembali untuk mengakses akun Anda."
+    confirmText="Keluar"
+    @confirm="handleLogout"
+  />
   <header
     class="fixed top-0 inset-x-0 backdrop-blur-md bg-[var(--background)]/50 z-10 transition-all duration-300"
     :class="isCollapsed ? 'md:ml-15' : 'md:ml-64'"
@@ -68,12 +76,13 @@
               <User class="w-5 h-5" />
               <p>Profile</p>
             </NuxtLink>
-            <div
+            <button
               class="p-2 py-3 flex gap-3 text-muted hover:text-foreground hover:bg-primary-soft"
+              @click="showDialog = true"
             >
               <LogOut class="w-5 h-5" />
               <p>Keluar</p>
-            </div>
+            </button>
           </template>
         </DropdownMenu>
       </div>
@@ -97,6 +106,7 @@ const props = defineProps({
 const emit = defineEmits(["toggle-sidebar", "toggle-collapse"]);
 const { isDark } = useDarkMode();
 
+const showDialog = ref(false);
 const siteInfo = ref({
   name: "Kedai Kopi Senja",
   domain: "kedaisenja.com",
@@ -105,4 +115,7 @@ const siteInfo = ref({
 const linkProfil = computed(() => {
   return "/client/profil";
 });
+const handleLogout = () => {
+  return navigateTo("/");
+};
 </script>

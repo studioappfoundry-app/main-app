@@ -1,10 +1,5 @@
 @import "tailwindcss";
 @import "@splidejs/splide/dist/css/splide.min.css";
-/* Design tokens & base styles for the component gallery.
-   Ported from the original Next.js/Tailwind app.globals.css.
-   Tailwind utility classes are available project-wide via the import
-   above; the gallery components themselves use plain custom CSS
-   classes (ported as-is below), matching the original source. */
 
 :root {
   --font-sans: "openRunde", ui-sans-serif, system-ui, sans-serif;

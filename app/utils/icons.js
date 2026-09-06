@@ -162,3 +162,8 @@ export { default as Zap } from "~icons/lucide/zap";
 export { default as UploadCloud } from "~icons/lucide/upload-cloud";
 export { default as QrCode } from "~icons/lucide/qr-code";
 export { default as Landmark } from "~icons/lucide/landmark";
+export { default as Trash } from "~icons/lucide/trash";
+export { default as Terminal } from "~icons/lucide/terminal";
+export { default as Camera } from "~icons/lucide/camera";
+export { default as Phone } from "~icons/lucide/phone";
+export { default as Chrome } from "~icons/lucide/chrome";
