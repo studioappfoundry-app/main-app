@@ -74,8 +74,8 @@ export default defineNuxtConfig({
   },
   hooks: {
     "prerender:routes"(ctx) {
-      const base = useRuntimeConfig().app.baseURL;
-      if (base === "/" || !base) return; // skip kalau lagi dev/tanpa base
+      const base = process.env.NUXT_APP_BASE_URL || "/";
+      if (base === "/" || !base) return;
       ctx.routes = new Set(
         [...ctx.routes].map((r) =>
           r.startsWith(base) ? r : `${base}${r}`.replace(/\/+/g, "/"),
