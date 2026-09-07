@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   ],
 
   app: {
-    baseURL: "/",
+    baseURL: "/main-app/",
     head: {
       title: "Component Gallery — Durable-inspired UI",
 
@@ -72,15 +72,12 @@ export default defineNuxtConfig({
       ],
     },
   },
-  hooks: {
-    "prerender:routes"(ctx) {
-      const base = process.env.NUXT_APP_BASE_URL || "/";
-      if (base === "/" || !base) return;
-      ctx.routes = new Set(
-        [...ctx.routes].map((r) =>
-          r.startsWith(base) ? r : `${base}${r}`.replace(/\/+/g, "/"),
-        ),
-      );
+  nitro: {
+    preset: "github_pages",
+
+    prerender: {
+      crawlLinks: false,
+      routes: ["/"],
     },
   },
 });
